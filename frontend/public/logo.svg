@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" fill="none">
+  <defs>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff0055"/>
+      <stop offset="100%" stop-color="#ff4400"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00ff88"/>
+      <stop offset="100%" stop-color="#00ccff"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="200" cy="200" r="190" fill="#0a0a0b" stroke="url(#g1)" stroke-width="2"/>
+
+  <!-- Trophy / Award shape -->
+  <g transform="translate(200,180)">
+    <!-- Trophy cup -->
+    <path d="M-30,-50 L-25,-10 L25,-10 L30,-50 Z" fill="url(#g1)" opacity="0.9"/>
+    <rect x="-22" y="-10" width="44" height="8" rx="2" fill="url(#g1)"/>
+    <!-- Handles -->
+    <path d="M-30,-45 C-50,-40 -50,-25 -25,-20" stroke="url(#g1)" stroke-width="3" fill="none"/>
+    <path d="M30,-45 C50,-40 50,-25 25,-20" stroke="url(#g1)" stroke-width="3" fill="none"/>
+    <!-- Stem -->
+    <rect x="-6" y="-2" width="12" height="20" rx="3" fill="url(#g1)"/>
+    <!-- Base -->
+    <rect x="-25" y="18" width="50" height="6" rx="3" fill="url(#g1)"/>
+    <rect x="-18" y="24" width="36" height="4" rx="2" fill="url(#g1)"/>
+  </g>
+
+  <!-- Frequency / Waveform bars -->
+  <g transform="translate(50,280)" filter="url(#glow)">
+    <rect x="0" y="0" width="8" height="40" rx="2" fill="url(#g2)" opacity="0.6"/>
+    <rect x="16" y="-15" width="8" height="55" rx="2" fill="url(#g2)" opacity="0.8"/>
+    <rect x="32" y="-25" width="8" height="65" rx="2" fill="url(#g2)" opacity="0.9"/>
+    <rect x="48" y="-10" width="8" height="50" rx="2" fill="url(#g2)" opacity="0.7"/>
+    <rect x="64" y="5" width="8" height="35" rx="2" fill="url(#g2)" opacity="0.5"/>
+  </g>
+
+  <!-- Vinyl record -->
+  <g transform="translate(200,310)" filter="url(#glow)">
+    <circle cx="0" cy="0" r="25" fill="#141416" stroke="url(#g2)" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="8" fill="#ff0055"/>
+    <circle cx="0" cy="0" r="3" fill="#0a0a0b"/>
+    <!-- Grooves -->
+    <circle cx="0" cy="0" r="16" fill="none" stroke="url(#g2)" stroke-width="0.5" opacity="0.4"/>
+    <circle cx="0" cy="0" r="20" fill="none" stroke="url(#g2)" stroke-width="0.5" opacity="0.3"/>
+  </g>
+
+  <!-- Star sparkles -->
+  <g fill="url(#g2)" opacity="0.7">
+    <circle cx="320" cy="100" r="3"/>
+    <circle cx="340" cy="130" r="2"/>
+    <circle cx="80" cy="90" r="2.5"/>
+    <circle cx="60" cy="120" r="1.5"/>
+  </g>
+</svg>

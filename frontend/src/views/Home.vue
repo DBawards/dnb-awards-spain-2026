@@ -14,6 +14,7 @@ onMounted(async () => {
   <div class="hero">
     <div class="hero-overlay"></div>
     <div class="hero-content">
+      <img src="/logo.svg" alt="DnB Awards Spain 2026" class="hero-logo" />
       <h1 class="hero-title">DRUM &amp; BASS<br>AWARDS SPAIN</h1>
       <p class="hero-year">2026</p>
       <p class="hero-sub">Celebrando lo mejor de la escena DnB nacional</p>

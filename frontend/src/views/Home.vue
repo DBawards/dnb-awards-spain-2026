@@ -1,12 +1,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 const categorias = ref([])
-const stats = ref({ categorias: 0, nominados: 0, votos: 0 })
 
 onMounted(async () => {
   const res = await fetch(`${import.meta.env.VITE_API_URL}/api/categorias`)
   categorias.value = await res.json()
-  stats.value.categorias = categorias.value.length
 })
 </script>
 
@@ -18,7 +16,6 @@ onMounted(async () => {
       <h1 class="hero-title">DRUM &amp; BASS<br>AWARDS SPAIN</h1>
       <p class="hero-year">2026</p>
       <p class="hero-sub">Vota a tus favoritos de la escena DnB nacional</p>
-      <p class="hero-sub">Celebrando lo mejor de la escena DnB nacional</p>
       <div class="hero-actions">
         <router-link to="/categorias" class="btn btn-primary">Ver Categorías</router-link>
         <router-link to="/resultados" class="btn btn-secondary">Resultados</router-link>
@@ -35,7 +32,7 @@ onMounted(async () => {
           <span class="card-number">{{ String(i + 1).padStart(2, '0') }}</span>
           <h3>{{ cat.nombre }}</h3>
           <p>{{ cat.descripcion }}</p>
-          <router-link :to="`/votar/${cat.id}`" class="btn btn-small">Votar</router-link>
+          <router-link :to="`/votar/${cat.id}`" class="btn btn-primary btn-small">Votar</router-link>
         </div>
       </div>
     </div>

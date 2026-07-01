@@ -146,16 +146,15 @@ img { max-width: 100%; height: auto; display: block; }
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-.hero-year {
-  font-size: clamp(3rem, 10vw, 8rem);
-  font-weight: 900;
-  line-height: 1;
-  color: transparent;
-  -webkit-text-stroke: 1.5px var(--accent);
-  margin: 4px 0;
+.hero-sub-year {
+  font-size: clamp(0.85rem, 3.5vw, 1.4rem);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--text2);
+  margin: 6px 0 4px;
 }
 .hero-sub {
-  font-size: clamp(0.9rem, 3vw, 1.1rem);
+  font-size: clamp(0.85rem, 2.5vw, 1.05rem);
   color: var(--text2);
   margin: 20px 0 32px;
 }
@@ -169,7 +168,6 @@ img { max-width: 100%; height: auto; display: block; }
 
 @media (min-width: 768px) {
   .hero-logo { width: min(400px, 50vw); }
-  .hero-year { -webkit-text-stroke: 2px var(--accent); }
 }
 
 /* Buttons */

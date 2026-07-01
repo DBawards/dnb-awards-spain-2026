@@ -5,8 +5,8 @@ const categorias = ref({})
 
 onMounted(async () => {
   const [resRes, catRes] = await Promise.all([
-    fetch('http://localhost:8000/api/resultados'),
-    fetch('http://localhost:8000/api/categorias')
+    fetch(`${import.meta.env.VITE_API_URL}/api/resultados`),
+    fetch(`${import.meta.env.VITE_API_URL}/api/categorias`)
   ])
   const cats = await catRes.json()
   cats.forEach(c => { categorias.value[c.id] = c.nombre })

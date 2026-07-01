@@ -16,8 +16,8 @@ onMounted(() => {
 
 async function load() {
   const [catRes, nomRes] = await Promise.all([
-    fetch('http://localhost:8000/api/categorias'),
-    fetch(`http://localhost:8000/api/nominaciones/${props.id}`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/categorias`),
+    fetch(`${import.meta.env.VITE_API_URL}/api/nominaciones/${props.id}`)
   ])
   const cats = await catRes.json()
   categoria.value = cats.find(c => c.id === Number(props.id))
@@ -28,7 +28,7 @@ async function votar() {
   if (!selected.value) return
   error.value = ''
   try {
-    const res = await fetch('http://localhost:8000/api/votar', {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/votar`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nominacion_id: selected.value, voter_hash: voterHash.value })

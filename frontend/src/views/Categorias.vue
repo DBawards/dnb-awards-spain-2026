@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 const categorias = ref([])
 onMounted(async () => {
-  const res = await fetch('http://localhost:8000/api/categorias')
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/categorias`)
   categorias.value = await res.json()
 })
 </script>

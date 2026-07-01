@@ -4,7 +4,7 @@ const categorias = ref([])
 const stats = ref({ categorias: 0, nominados: 0, votos: 0 })
 
 onMounted(async () => {
-  const res = await fetch('http://localhost:8000/api/categorias')
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/categorias`)
   categorias.value = await res.json()
   stats.value.categorias = categorias.value.length
 })

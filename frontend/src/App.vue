@@ -1,10 +1,17 @@
 <script setup>
 import { RouterView, useRoute } from 'vue-router'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 const route = useRoute()
 const isHome = computed(() => route.path === '/')
 const menuOpen = ref(false)
+const transitionName = ref('slide-left')
+
+watch(() => route.path, (to, from) => {
+  const toDepth = to.split('/').length
+  const fromDepth = from.split('/').length
+  transitionName.value = toDepth >= fromDepth ? 'slide-left' : 'slide-right'
+})
 </script>
 
 <template>
@@ -22,5 +29,9 @@ const menuOpen = ref(false)
       </div>
     </div>
   </nav>
-  <router-view />
+  <router-view v-slot="{ Component }">
+    <transition :name="transitionName" mode="out-in">
+      <component :is="Component" />
+    </transition>
+  </router-view>
 </template>

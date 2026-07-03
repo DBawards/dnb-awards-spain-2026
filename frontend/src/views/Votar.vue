@@ -1,15 +1,35 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import VoteCelebration from '../components/VoteCelebration.vue'
 
 const props = defineProps({ id: String })
+const router = useRouter()
 const categoria = ref(null)
+const categorias = ref([])
 const nominados = ref([])
 const selected = ref(null)
 const voted = ref(false)
 const showCelebration = ref(false)
+const showConfirm = ref(false)
 const voterHash = ref('')
 const error = ref('')
+
+const categoriaIndex = computed(() =>
+  categorias.value.findIndex(c => c.id === Number(props.id))
+)
+
+const prevCategoria = computed(() =>
+  categoriaIndex.value > 0 ? categorias.value[categoriaIndex.value - 1] : null
+)
+
+const nextCategoria = computed(() =>
+  categoriaIndex.value < categorias.value.length - 1 ? categorias.value[categoriaIndex.value + 1] : null
+)
+
+const selectedNominee = computed(() =>
+  nominados.value.find(n => n.id === selected.value)
+)
 
 onMounted(() => {
   voterHash.value = 'anon-' + Math.random().toString(36).slice(2, 10)
@@ -21,13 +41,19 @@ async function load() {
     fetch(`${import.meta.env.VITE_API_URL}/api/categorias`),
     fetch(`${import.meta.env.VITE_API_URL}/api/nominaciones/${props.id}`)
   ])
-  const cats = await catRes.json()
-  categoria.value = cats.find(c => c.id === Number(props.id))
+  categorias.value = await catRes.json()
+  categoria.value = categorias.value.find(c => c.id === Number(props.id))
   nominados.value = await nomRes.json()
 }
 
-async function votar() {
+function abrirConfirmacion(id) {
+  selected.value = id
+  showConfirm.value = true
+}
+
+async function confirmarVoto() {
   if (!selected.value) return
+  showConfirm.value = false
   error.value = ''
   try {
     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/votar`, {
@@ -46,12 +72,36 @@ async function votar() {
     error.value = e.message
   }
 }
+
+// Swipe
+let touchStartX = 0
+function onTouchStart(e) {
+  touchStartX = e.changedTouches[0].screenX
+}
+function onTouchEnd(e) {
+  const delta = touchStartX - e.changedTouches[0].screenX
+  if (Math.abs(delta) > 50) {
+    if (delta > 0 && nextCategoria.value) {
+      router.push(`/votar/${nextCategoria.value.id}`)
+    } else if (delta < 0 && prevCategoria.value) {
+      router.push(`/votar/${prevCategoria.value.id}`)
+    }
+  }
+}
 </script>
 
 <template>
-  <div class="page">
+  <div class="page" @touchstart="onTouchStart" @touchend="onTouchEnd">
     <div class="container">
       <router-link to="/categorias" class="back-link">← Categorías</router-link>
+
+      <div class="cat-progress" v-if="categorias.length">
+        <span class="cat-progress-text">{{ categoriaIndex + 1 }} / {{ categorias.length }}</span>
+        <div class="cat-progress-bar">
+          <div class="cat-progress-fill" :style="{ width: ((categoriaIndex + 1) / categorias.length * 100) + '%' }"></div>
+        </div>
+      </div>
+
       <h1 v-if="categoria">{{ categoria.nombre }}</h1>
       <p class="subtitle" v-if="categoria">{{ categoria.descripcion }}</p>
 
@@ -64,7 +114,7 @@ async function votar() {
       <div class="nominees">
         <div v-for="n in nominados" :key="n.id"
           :class="['nominee-card', { selected: selected === n.id }]"
-          @click="selected = n.id; voted = false">
+          @click="abrirConfirmacion(n.id)">
           <div class="nominee-info">
             <h3>{{ n.artista }}</h3>
             <p v-if="n.track" class="track">{{ n.track }}</p>
@@ -80,13 +130,34 @@ async function votar() {
         </div>
       </div>
 
-      <button v-if="selected && !voted" class="btn btn-primary btn-large" @click="votar">
-        Votar ahora
-      </button>
+      <div class="cat-nav" v-if="categorias.length > 1">
+        <router-link v-if="prevCategoria" :to="`/votar/${prevCategoria.id}`" class="btn btn-secondary btn-small">← {{ prevCategoria.nombre }}</router-link>
+        <span v-else></span>
+        <router-link v-if="nextCategoria" :to="`/votar/${nextCategoria.id}`" class="btn btn-secondary btn-small">{{ nextCategoria.nombre }} →</router-link>
+      </div>
 
       <template v-if="voted">
         <VoteCelebration v-if="showCelebration" @done="showCelebration = false" />
       </template>
     </div>
   </div>
+
+  <Teleport to="body">
+    <div v-if="showConfirm" class="sheet-overlay" @click="showConfirm = false">
+      <div class="sheet" @click.stop>
+        <div class="sheet-handle"></div>
+        <h3 class="sheet-title">Confirmar voto</h3>
+        <div class="sheet-nominee" v-if="selectedNominee">
+          <strong>{{ selectedNominee.artista }}</strong>
+          <span v-if="selectedNominee.track" class="track">{{ selectedNominee.track }}</span>
+          <p v-if="selectedNominee.descripcion" class="desc" style="margin-top:6px;display:block">{{ selectedNominee.descripcion }}</p>
+        </div>
+        <p class="sheet-note">Tu voto es único por categoría. No podrás cambiarlo después.</p>
+        <div class="sheet-actions">
+          <button class="btn btn-primary btn-large" @click="confirmarVoto">Confirmar voto</button>
+          <button class="btn btn-secondary btn-large" @click="showConfirm = false">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </Teleport>
 </template>

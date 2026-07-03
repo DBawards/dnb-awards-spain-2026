@@ -1,11 +1,13 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
+import VoteCelebration from '../components/VoteCelebration.vue'
 
 const props = defineProps({ id: String })
 const categoria = ref(null)
 const nominados = ref([])
 const selected = ref(null)
 const voted = ref(false)
+const showCelebration = ref(false)
 const voterHash = ref('')
 const error = ref('')
 
@@ -38,6 +40,7 @@ async function votar() {
       throw new Error(data.detail || 'Error al votar')
     }
     voted.value = true
+    showCelebration.value = true
     load()
   } catch (e) {
     error.value = e.message
@@ -52,8 +55,9 @@ async function votar() {
       <h1 v-if="categoria">{{ categoria.nombre }}</h1>
       <p class="subtitle" v-if="categoria">{{ categoria.descripcion }}</p>
 
-      <div v-if="voted" class="alert alert-success">
+      <div v-if="voted && !showCelebration" class="alert alert-success">
         ¡Voto emitido correctamente!
+        <span style="display:block;font-size:0.85rem;margin-top:4px;font-weight:400">Tu voto ya cuenta</span>
       </div>
       <div v-if="error" class="alert alert-error">{{ error }}</div>
 
@@ -77,8 +81,12 @@ async function votar() {
       </div>
 
       <button v-if="selected && !voted" class="btn btn-primary btn-large" @click="votar">
-        Votar
+        Votar ahora
       </button>
+
+      <template v-if="voted">
+        <VoteCelebration v-if="showCelebration" @done="showCelebration = false" />
+      </template>
     </div>
   </div>
 </template>

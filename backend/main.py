@@ -135,8 +135,12 @@ def crear_nominacion(n: NominacionIn):
 
 @app.get("/api/seed")
 def seed_nominaciones():
-    """Carga nominaciones de ejemplo para pruebas"""
+    """Carga nominaciones de ejemplo para pruebas (idempotente)"""
     conn = get_db()
+    cur = conn.execute("SELECT COUNT(*) FROM nominaciones")
+    if cur.fetchone()[0] > 0:
+        conn.close()
+        return {"ok": True, "insertadas": 0, "message": "Ya hay datos"}
     samples = [
         (1, "DJ Chapas", None, "Referente del DnB nacional"),
         (1, "Kursiva", None, "15 años de carrera, neurofunk"),

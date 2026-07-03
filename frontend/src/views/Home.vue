@@ -3,11 +3,24 @@ import { ref, onMounted } from 'vue'
 import BgParticles from '../components/BgParticles.vue'
 
 const categorias = ref([])
+const loading = ref(true)
+const error = ref('')
 
 onMounted(async () => {
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/categorias`)
-  categorias.value = await res.json()
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/categorias`)
+    if (!res.ok) throw new Error('Error al cargar categorías')
+    categorias.value = await res.json()
+  } catch (e) {
+    error.value = e.message
+  } finally {
+    loading.value = false
+  }
 })
+
+function recargar() {
+  window.location.reload()
+}
 </script>
 
 <template>
@@ -39,7 +52,16 @@ onMounted(async () => {
         <h2>10 formas de brillar</h2>
         <p class="subtitle">DJs, productores, tracks, festivales y más</p>
       </div>
-      <div class="grid">
+
+      <div v-if="loading" class="loading">
+        <div class="spinner"></div>
+        <span>Cargando categorías...</span>
+      </div>
+      <div v-else-if="error" class="empty">
+        <p>No se pudieron cargar las categorías. Intenta de nuevo más tarde.</p>
+        <button class="btn btn-primary" @click="recargar">Reintentar</button>
+      </div>
+      <div v-else class="grid">
         <div v-for="(cat, i) in categorias" :key="cat.id" class="card">
           <div class="card-glow"></div>
           <span class="card-number">{{ String(i + 1).padStart(2, '0') }}</span>
